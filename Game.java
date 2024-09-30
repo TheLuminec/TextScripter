@@ -86,23 +86,31 @@ public class Game {
 
                     if (description != null) {
                         description.setText(textValue);
-                    } else if (option != null) {
+                    } 
+                    else if (option != null) {
                         option.setText(textValue);
                     }
-                } else {
+                } 
+
+                else {
                     String value = parts[1].trim();
                     if (key.equals("CONDITION")) {
                         if (description != null) {
                             description.setCondition(value);
-                        } else if (option != null) {
+                        } 
+                        else if (option != null) {
                             option.setCondition(value);
                         }
-                    } else if (key.equals("ACTIONS") && option != null) {
+
+                    } 
+                    else if (key.equals("ACTIONS") && option != null) {
                         String[] actions = value.split(",");
                         option.setActions(Arrays.asList(actions));
-                    } else if (key.equals("TIMECOST") && option != null) {
+                    } 
+                    else if (key.equals("TIMECOST") && option != null) {
                         option.setTimeCost(Integer.parseInt(value));
-                    } else if (key.equals("NEXT") && option != null) {
+                    } 
+                    else if (key.equals("NEXT") && option != null) {
                         option.setNextRoomId(value);
                     }
                 }
@@ -110,10 +118,10 @@ public class Game {
         }
         reader.close();
 
-        // Set starting room
         if (currentRoom == null) {
             throw new Exception("Starting room not defined in the script.");
-        } else {
+        } 
+        else {
             currentRoom = rooms.get(currentRoom.getId());
         }
     }
@@ -121,13 +129,14 @@ public class Game {
     public void play() {
         Scanner scanner = new Scanner(System.in);
         System.out.println("Starting...");
+
         main:while (true) {
             // Check if timer has run out
             if (timer <= 0) {
                 if (rooms.containsKey("timeEnd")) {
                     currentRoom = rooms.get("timeEnd");
-                    timer = 0;
-                } else {
+                } 
+                else {
                     System.out.println("Time's up! Game over.");
                     break;
                 }
@@ -144,6 +153,7 @@ public class Game {
             if (availableOptions.isEmpty()) {
                 break;
             }
+
             for (int i = 0; i < availableOptions.size(); i++) {
                 Option opt = availableOptions.get(i);
                 System.out.println((i + 1) + ". " + opt.getText() +
@@ -155,7 +165,8 @@ public class Game {
             int choice = 0;
             try {
                 choice = Integer.parseInt(scanner.nextLine());
-            } catch (NumberFormatException e) {
+            } 
+            catch (NumberFormatException e) {
                 System.out.println("Invalid input. Please enter a number.");
                 continue;
             }
@@ -163,7 +174,8 @@ public class Game {
             if (choice == -1) {
                 System.out.println("Exiting...");
                 break;
-            } else if (choice < 1 || choice > availableOptions.size()) {
+            } 
+            else if (choice < 1 || choice > availableOptions.size()) {
                 System.out.println("Invalid choice. Try again.");
                 continue;
             }
@@ -194,11 +206,13 @@ public class Game {
 
     private List<Option> getAvailableOptions() {
         List<Option> availableOptions = new ArrayList<>();
+
         for (Option option : currentRoom.getOptions()) {
             if (isOptionAvailable(option)) {
                 availableOptions.add(option);
             }
         }
+
         return availableOptions;
     }
 
@@ -210,6 +224,7 @@ public class Game {
         if (condition == null) {
             return true;
         }
+
         boolean negate = condition.startsWith("!");
         String item = negate ? condition.substring(1) : condition;
         boolean hasItem = player.hasItem(item);
@@ -217,7 +232,6 @@ public class Game {
     }
 
     private void processOption(Option option) {
-        // Decrease timer by the option's time cost
         timer -= option.getTimeCost();
 
         // Process actions
@@ -226,6 +240,7 @@ public class Game {
                 processAction(action.trim());
             }
         }
+        
         // Move to the next room
         currentRoom = rooms.get(option.getNextRoomId());
         if (currentRoom == null) {

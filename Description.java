@@ -2,7 +2,6 @@ public class Description {
     private String text;
     private String condition;
 
-    // Getters and setters
     public String getText() {
         return text;
     }

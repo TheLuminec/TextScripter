@@ -1,5 +1,5 @@
 # Global settings
-TIMER=10
+TIMER=20
 START=room1
 
 # Starting Room

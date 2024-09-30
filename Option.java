@@ -7,7 +7,6 @@ public class Option {
     private String nextRoomId;
     private int timeCost = 1;
 
-    // Getters and setters
     public String getText() {
         return text;
     }

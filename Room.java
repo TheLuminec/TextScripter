@@ -10,7 +10,6 @@ public class Room {
         this.id = id;
     }
 
-    // Getters and setters
     public String getId() {
         return id;
     }
