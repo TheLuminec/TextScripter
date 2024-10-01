@@ -1,20 +1,22 @@
+import java.util.List;
+
 public class Description {
     private String text;
-    private String condition;
+    private List<String> conditions;
 
     public String getText() {
         return text;
     }
 
-    public String getCondition() {
-        return condition;
+    public List<String> getConditions() {
+        return conditions;
     }
 
     public void setText(String text) {
         this.text = text;
     }
 
-    public void setCondition(String condition) {
-        this.condition = condition;
+    public void setConditions(List<String> conditions) {
+        this.conditions = conditions;
     }
 }

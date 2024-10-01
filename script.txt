@@ -1,5 +1,5 @@
 # Global settings
-TIMER=20
+TIMER=15
 START=room1
 
 # Starting Room
@@ -7,6 +7,7 @@ START=room1
 [DESCRIPTION]
 TEXT=
 You wake up in a spaceship. An alarm is blaring: "The air purification system is damaged. Proceed to the purification room for further diagnostics."
+
 You look around and see:
 - A vintage missile hanging on your wall
 - A closet in the corner
@@ -16,7 +17,6 @@ ENDTEXT
 
 [O]
 TEXT=Inspect the missile
-CONDITION=!missile
 NEXT=missile_path
 
 [O]
@@ -49,7 +49,8 @@ NEXT=room1
 # Closet Path
 <closet_path>
 [DESCRIPTION]
-TEXT=You inspect the closet and see:
+TEXT=
+You inspect the closet and see:
 - A sledgehammer
 - Some clothes
 ENDTEXT
@@ -61,7 +62,7 @@ ACTIONS=addItem:sledgehammer
 NEXT=closet_path
 
 [O]
-TEXT=Put on some clothes (lose time)
+TEXT=Put on some clothes
 TIMECOST=2
 TEXT=You put on some clothes and look awesome, but it took some time.
 NEXT=closet_path
@@ -82,16 +83,14 @@ TEXT=The alarm clock is smashed to pieces.
 
 [O]
 TEXT=Break the alarm clock with the sledgehammer
-CONDITION=sledgehammer
-CONDITION=!alarm_clock_broken
+CONDITION=sledgehammer,!alarm_clock_broken
 ACTIONS=addItem:batteries,addItem:alarm_clock_broken
 TEXT=You smash the alarm clock and retrieve the batteries.
 NEXT=alarm_clock_path
 
 [O]
 TEXT=You don't have anything to break the alarm clock with.
-CONDITION=!sledgehammer
-CONDITION=!alarm_clock_broken
+CONDITION=!sledgehammer,!alarm_clock_broken
 
 [O]
 TEXT=Go back
@@ -139,16 +138,14 @@ NEXT=explode_ship
 
 [O]
 TEXT=Use the batteries on the key card reader
-CONDITION=batteries
-CONDITION=!key_card_reader_powered
+CONDITION=batteries,!key_card_reader_powered
 ACTIONS=addItem:key_card_reader_powered,removeItem:batteries
 TEXT=You power up the key card reader, but you still need a key card.
 NEXT=broken_door
 
 [O]
 TEXT=Use the key card on the reader
-CONDITION=key_card
-CONDITION=key_card_reader_powered
+CONDITION=key_card,key_card_reader_powered
 NEXT=toolbox_room
 
 [O]
@@ -241,6 +238,7 @@ NEXT=suffocate
 [O]
 TEXT=Cut the blue wire
 TIMECOST=2
+ACTIONS=addItem:purifier_fixed
 NEXT=wiring_puzzle_correct
 
 [O]
@@ -251,6 +249,7 @@ NEXT=suffocate
 # Correct Wiring
 <wiring_puzzle_correct>
 [DESCRIPTION]
+CONDITION=purifier_fixed
 TEXT=You cut the blue wire and reconnect it properly. The purifier hums back to life.
 
 [O]
@@ -261,13 +260,13 @@ NEXT=ending
 <suffocate>
 [DESCRIPTION]
 TEXT=You made a mistake. The purifier fails completely, and you suffocate painfully.
-CONDITION=!endGame
+CONDITION=endGame
 
 # Explosion Ending
 <explode_ship>
 [DESCRIPTION]
 TEXT=The missile explodes, destroying the ship. The end.
-CONDITION=!endGame
+CONDITION=endGame
 
 # Game Ending
 <ending>
@@ -277,7 +276,7 @@ The alarm turns off. The purifier is working again.
 
 You go back to bed, sad that you lost your missile.
 ENDTEXT
-CONDITION=!endGame
+CONDITION=endGame
 
 # Time End
 <timeEnd>
@@ -287,4 +286,4 @@ Time's up! You couldn't fix the purifier in time.
 
 The lack of clean air takes its toll, and you slowly lose consciousness.
 ENDTEXT
-CONDITION=!endGame
+CONDITION=endGame

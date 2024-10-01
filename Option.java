@@ -2,7 +2,7 @@ import java.util.List;
 
 public class Option {
     private String text;
-    private String condition;
+    private List<String> conditions;
     private List<String> actions;
     private String nextRoomId;
     private int timeCost = 1;
@@ -11,8 +11,8 @@ public class Option {
         return text;
     }
 
-    public String getCondition() {
-        return condition;
+    public List<String> getConditions() {
+        return conditions;
     }
 
     public List<String> getActions() {
@@ -31,8 +31,8 @@ public class Option {
         this.text = text;
     }
 
-    public void setCondition(String condition) {
-        this.condition = condition;
+    public void setConditions(List<String> conditions) {
+        this.conditions = conditions;
     }
 
     public void setActions(List<String> actions) {

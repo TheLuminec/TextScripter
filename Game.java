@@ -55,11 +55,10 @@ public class Game {
             if (line.equals("[O]")) {
                 option = new Option();
                 room.addOption(option);
-                description = null; // Reset description
+                description = null;
                 continue;
             }
 
-            // Key-value pairs
             if (line.contains("=")) {
                 String[] parts = line.split("=", 2);
                 String key = parts[0].trim();
@@ -78,7 +77,6 @@ public class Game {
                             textBuilder.append(line).append("\n");
                         }
                     } else {
-                        // Single-line text
                         textBuilder.append(value);
                     }
 
@@ -91,17 +89,15 @@ public class Game {
                         option.setText(textValue);
                     }
                 } 
-
                 else {
                     String value = parts[1].trim();
                     if (key.equals("CONDITION")) {
+                        List<String> conditions = Arrays.asList(value.split(","));
                         if (description != null) {
-                            description.setCondition(value);
-                        } 
-                        else if (option != null) {
-                            option.setCondition(value);
+                            description.setConditions(conditions);
+                        } else if (option != null) {
+                            option.setConditions(conditions);
                         }
-
                     } 
                     else if (key.equals("ACTIONS") && option != null) {
                         String[] actions = value.split(",");
@@ -120,8 +116,7 @@ public class Game {
 
         if (currentRoom == null) {
             throw new Exception("Starting room not defined in the script.");
-        } 
-        else {
+        } else {
             currentRoom = rooms.get(currentRoom.getId());
         }
     }
@@ -180,13 +175,11 @@ public class Game {
                 continue;
             }
 
-            // Process chosen option
             Option selectedOption = availableOptions.get(choice - 1);
             processOption(selectedOption);
 
-            // Check for win condition or end of game
             for(Description d : currentRoom.getDescriptions()) {
-                if (d.getCondition() != null && d.getCondition().equals("!endGame")) {
+                if (d.getConditions() != null && d.getConditions().contains("endGame")) {
                     displayRoomDescriptions();
                     
                     break main;
@@ -198,7 +191,7 @@ public class Game {
 
     private void displayRoomDescriptions() {
         for (Description description : currentRoom.getDescriptions()) {
-            if (isConditionMet(description.getCondition())) {
+            if (isConditionMet(description.getConditions())) {
                 System.out.println(description.getText());
             }
         }
@@ -217,31 +210,37 @@ public class Game {
     }
 
     private boolean isOptionAvailable(Option option) {
-        return isConditionMet(option.getCondition());
+        return isConditionMet(option.getConditions());
     }
 
-    private boolean isConditionMet(String condition) {
-        if (condition == null) {
+    private boolean isConditionMet(List<String> conditions) {
+        if (conditions == null || conditions.isEmpty()) {
             return true;
         }
 
-        boolean negate = condition.startsWith("!");
-        String item = negate ? condition.substring(1) : condition;
-        boolean hasItem = player.hasItem(item);
-        return negate ? !hasItem : hasItem;
+        for (String condition : conditions) {
+            condition = condition.trim();
+            boolean negate = condition.startsWith("!");
+            String item = negate ? condition.substring(1) : condition;
+            boolean hasItem = player.hasItem(item);
+            boolean conditionMet = negate ? !hasItem : hasItem;
+
+            if (!conditionMet) {
+                return false; // If any condition is not met, return false
+            }
+        }
+        return true;
     }
 
     private void processOption(Option option) {
         timer -= option.getTimeCost();
 
-        // Process actions
         if (option.getActions() != null) {
             for (String action : option.getActions()) {
                 processAction(action.trim());
             }
         }
-        
-        // Move to the next room
+
         currentRoom = rooms.get(option.getNextRoomId());
         if (currentRoom == null) {
             System.out.println("The room '" + option.getNextRoomId() + "' does not exist.");
@@ -253,12 +252,9 @@ public class Game {
         if (action.startsWith("addItem:")) {
             String item = action.substring(8);
             player.addItem(item);
-            System.out.println("You have obtained: " + item);
-        } 
-        else if (action.startsWith("removeItem:")) {
+        } else if (action.startsWith("removeItem:")) {
             String item = action.substring(11);
             player.removeItem(item);
-            System.out.println("You have lost: " + item);
         }
     }
 }
