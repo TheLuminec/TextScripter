@@ -1,192 +1,182 @@
 # Text-Based Adventure Game
 
-This is a text-based adventure game written in Java that reads game content from a custom scripting language defined in a text file. The game features rooms, options, items, conditional descriptions, an in-game timer.
-
+This is a text-based adventure game written in Java, featuring a customizable scripting language that allows you to define game content, including rooms, descriptions, options, conditions, actions, and an in-game timer.
 ## Table of Contents
 
+- [Overview](#overview)
 - [Features](#features)
-- [Getting Started](#getting-started)
-  - [Prerequisites](#prerequisites)
-  - [Compilation](#compilation)
-  - [Running the Game](#running-the-game)
+- [Prerequisites](#prerequisites)
+- [Setup and Compilation](#setup-and-compilation)
+- [Running the Game](#running-the-game)
 - [Scripting Language Guide](#scripting-language-guide)
   - [Script Structure](#script-structure)
   - [Global Settings](#global-settings)
   - [Rooms](#rooms)
-    - [Descriptions](#descriptions)
-    - [Options](#options)
+  - [Descriptions](#descriptions)
+  - [Options](#options)
   - [Conditions](#conditions)
   - [Actions](#actions)
   - [Time Costs](#time-costs)
   - [Special Rooms](#special-rooms)
-- [Example Script](#example-script)
-- [Creating Your Own Adventure](#creating-your-own-adventure)
-- [Contributing](#contributing)
+  - [Example Script](#example-script)
+- [Extending the Game](#extending-the-game)
 - [License](#license)
 
----
+## Overview
+
+This game engine allows you to create interactive text-based adventure games. By writing scripts in a simple custom scripting language, you can define the game's rooms, descriptions, player options, and game logic without modifying the Java code.
 
 ## Features
 
-- **Custom Scripting Language**: Define your game's narrative, rooms, options, and logic in an external script file.
-- **Conditional Descriptions**: Display room descriptions based on the player's inventory or game state.
-- **Inventory System**: Players can pick up and use items, which affect available options and descriptions.
-- **In-Game Timer**: Actions consume time, and the game can end when time runs out.
-- **Multiple Endings**: Different endings based on player choices and actions.
-- **Extensibility**: Easily add new rooms, items, and mechanics by editing the script file.
+- **Custom Scripting Language**: Define game content using a simple and flexible script format.
+- **Conditional Descriptions and Options**: Show or hide descriptions and options based on player inventory and conditions.
+- **Inventory Management**: Players can acquire and lose items that affect game progression.
+- **In-Game Timer**: Actions can consume time, and the game can end when the timer runs out.
+- **Multiple Conditions**: Options and descriptions can have multiple conditions for complex game logic.
+- **Customizable Endings**: Define special rooms for game endings, such as winning or running out of time.
 
----
+## Prerequisites
 
-## Getting Started
+- Java Development Kit (JDK) 8 or higher
+- A text editor to modify scripts and code
+- Command-line interface (CLI) access for compilation and execution
 
-### Prerequisites
+## Setup and Compilation
 
-- **Java Development Kit (JDK)**: Ensure you have JDK 8 or higher installed.
-- **Text Editor**: Any text editor for editing the script file and code if needed.
+1. **Clone or Download the Repository**: Obtain the Java source files (`Main.java`, `Game.java`, `Room.java`, `Option.java`, `Description.java`, `Player.java`) and the script file (`script.txt`).
 
-### Compilation
+2. **Ensure All Files Are in the Same Directory**: Place all `.java` files and the `script.txt` file in a single directory.
 
-1. **Clone or Download the Repository**
+3. **Open a Terminal or Command Prompt**: Navigate to the directory containing the files.
 
-   Download the source code files to your local machine.
-
-2. **Navigate to the Source Directory**
-
-   Open a terminal or command prompt and navigate to the directory containing the `.java` files.
-
-3. **Compile the Java Classes**
+4. **Compile the Java Source Files**:
 
    ```bash
    javac Main.java Game.java Room.java Option.java Description.java Player.java
    ```
 
-   This command compiles all the necessary Java classes.
+   This command compiles the Java classes and generates `.class` files.
 
-### Running the Game
+## Running the Game
 
-After successful compilation, run the game using:
+After successful compilation, run the game using the following command:
 
 ```bash
 java Main
 ```
 
-The game will read the `script.txt` file in the same directory and start the adventure.
-
----
+The game will start, and you'll be presented with descriptions and options based on the `script.txt` file.
 
 ## Scripting Language Guide
 
-The game uses a custom scripting language defined in a text file (e.g., `script.txt`) to specify the game's content. This guide explains how to structure and write your own game scripts.
+The scripting language is designed to be intuitive and easy to use, allowing you to create rich game narratives without needing to modify the Java code.
 
 ### Script Structure
 
-The script file is organized into sections:
-
-1. **Global Settings**: Define game-wide settings like the timer and starting room.
-2. **Rooms**: Define the different locations in the game.
-3. **Descriptions**: Provide textual descriptions of rooms, which can be conditional.
-4. **Options**: Define the choices available to the player in each room.
-5. **Special Rooms**: Handle specific game states like time running out.
+- The script is a plain text file (e.g., `script.txt`).
+- Use `#` to add comments; any line starting with `#` is ignored by the parser.
+- The script is divided into sections: global settings, rooms, descriptions, options, and actions.
 
 ### Global Settings
 
-- **TIMER**: Sets the starting time for the game.
+Define global game settings at the beginning of the script.
 
-  ```plaintext
-  TIMER=10
-  ```
+- `TIMER=<number>`: Sets the starting time for the game.
+- `START=<room_id>`: Specifies the starting room ID.
 
-- **START**: Specifies the ID of the starting room.
+**Example:**
 
-  ```plaintext
-  START=room1
-  ```
+```plaintext
+TIMER=10
+START=room1
+```
 
 ### Rooms
 
-Each room starts with a room ID enclosed in angle brackets:
+Define rooms using the `<room_id>` syntax.
 
-```plaintext
-<room_id>
-```
-
-#### Descriptions
-
-- **[DESCRIPTION]**: Marks the beginning of a description block.
-- **TEXT**: Provides the description text.
-  - Supports multi-line text between `TEXT=` and `ENDTEXT`.
-- **CONDITION** (Optional): Specifies if the description should be shown based on the player's inventory.
+- Start a room definition with `<room_id>`.
+- Each room can have multiple descriptions and options.
 
 **Example:**
 
 ```plaintext
 <room1>
+```
+
+### Descriptions
+
+Descriptions are texts displayed to the player when they enter a room. You can have multiple descriptions per room, each with optional conditions.
+
+- Start a description block with `[DESCRIPTION]`.
+- Use `TEXT=` to define the description text. For multi-line text, leave the value empty and place the text on subsequent lines, ending with `ENDTEXT`.
+- Use `CONDITION=` to specify conditions under which the description is shown.
+
+**Example:**
+
+```plaintext
 [DESCRIPTION]
 TEXT=
-You are in a dark cave. The sound of dripping water echoes around you.
-There is a faint light to the east.
-ENDTEXT
-
-[DESCRIPTION]
-CONDITION=!torch
-TEXT=It's hard to see without a torch.
+You are in a dark room.
+There is a door to the north.
 ENDTEXT
 ```
 
-#### Options
+### Options
 
-- **[O]**: Marks the beginning of an option block.
-- **TEXT**: The text displayed to the player for this option.
-- **CONDITION** (Optional): Determines if the option is available based on the player's inventory.
-- **ACTIONS** (Optional): A list of actions to perform when the option is selected.
-- **TIMECOST** (Optional): The amount of time consumed by this action (default is 1).
-- **NEXT**: The ID of the next room to move to after this option.
+Options represent the choices available to the player in a room.
+
+- Start an option block with `[O]`.
+- Use `TEXT=` to define the option text.
+- Use `CONDITION=` to specify conditions for the option to be available.
+- Use `ACTIONS=` to define actions that occur when the option is selected.
+- Use `TIMECOST=` to specify how much time the action consumes (default is 1).
+- Use `NEXT=` to specify the ID of the next room to navigate to.
 
 **Example:**
 
 ```plaintext
 [O]
-TEXT=Pick up the torch
-CONDITION=!torch
-ACTIONS=addItem:torch
-NEXT=room1
-
-[O]
-TEXT=Go east towards the light
+TEXT=Open the door
+CONDITION=has_key
+ACTIONS=removeItem:has_key
+TIMECOST=1
 NEXT=room2
 ```
 
 ### Conditions
 
-Conditions control when descriptions and options are available.
+Conditions determine whether a description or option is available, based on the player's inventory.
 
-- **Syntax**:
-  - `item`: The player must have `item`.
-  - `!item`: The player must NOT have `item`.
+- List multiple conditions separated by commas.
+- Use `!` before an item to check if the player does **not** have the item.
+- All conditions must be met (logical AND).
 
 **Example:**
 
 ```plaintext
-CONDITION=key
+CONDITION=has_key,!door_open
 ```
 
 ### Actions
 
 Actions are executed when an option is selected.
 
-- **addItem:item**: Adds `item` to the player's inventory.
-- **removeItem:item**: Removes `item` from the player's inventory.
+- `addItem:<item>`: Adds an item to the player's inventory.
+- `removeItem:<item>`: Removes an item from the player's inventory.
+- List multiple actions separated by commas.
 
 **Example:**
 
 ```plaintext
-ACTIONS=addItem:key,removeItem:old_key
+ACTIONS=addItem:torch,removeItem:match
 ```
 
 ### Time Costs
 
-- **TIMECOST**: Specifies how much time (integer value) the action consumes.
-  - If not specified, defaults to 1.
+- `TIMECOST=<number>`: Specifies the time units consumed when the option is selected.
+- Default time cost is 1 if not specified.
+- Time can be increased by setting a negative `TIMECOST`.
 
 **Example:**
 
@@ -196,130 +186,101 @@ TIMECOST=2
 
 ### Special Rooms
 
-#### Time End Room
+You can define special rooms for game endings or specific events.
 
-When the timer reaches zero, the game transitions to the `timeEnd` room if it exists.
+#### Time End Room (`timeEnd`)
+
+- If the timer runs out, the game transitions to the `timeEnd` room, if defined.
+- Use this room to display a custom message or options when time expires.
+
+**Example:**
 
 ```plaintext
 <timeEnd>
 [DESCRIPTION]
-TEXT=
-Time has run out! The cave collapses around you.
-ENDTEXT
-
+TEXT=Time's up! You failed to complete your mission.
 [O]
-TEXT=Start over
+TEXT=Restart the game
 NEXT=room1
 ```
 
----
+#### Winning Room
 
-## Example Script
+- Use a specific room conditon `endGame` to signify that the game ends at that room.
 
-Here's a simplified example script:
+**Example:**
+
+```plaintext
+<win>
+[DESCRIPTION]
+TEXT=Congratulations! You have won the game.
+```
+
+### Example Script
+
+Below is a simplified example script demonstrating various features:
 
 ```plaintext
 # Global settings
 TIMER=10
 START=room1
 
+# Room Definitions
 <room1>
 [DESCRIPTION]
 TEXT=
-You find yourself in a forest clearing. There is a path leading north and a small hut to the east.
+You wake up in a mysterious room.
+There is a door to the north and a key on the table.
 ENDTEXT
 
 [O]
-TEXT=Go north along the path
-NEXT=forest_path
-
-[O]
-TEXT=Enter the hut
-NEXT=hut
-
-<forest_path>
-[DESCRIPTION]
-TEXT=You walk along the path and encounter a wild animal.
-
-[O]
-TEXT=Fight the animal
-CONDITION=sword
-ACTIONS=removeItem:sword
-NEXT=forest_clearing
-
-[O]
-TEXT=Run away
-TIMECOST=2
+TEXT=Take the key
+CONDITION=!has_key
+ACTIONS=addItem:has_key
 NEXT=room1
 
-<hut>
+[O]
+TEXT=Open the door
+CONDITION=has_key
+ACTIONS=removeItem:has_key
+NEXT=room2
+
+<room2>
 [DESCRIPTION]
-TEXT=Inside the hut, you find a rusty sword.
+TEXT=You enter a hallway with doors to the east and west.
 
 [O]
-TEXT=Take the sword
-CONDITION=!sword
-ACTIONS=addItem:sword
-NEXT=hut
-
-[O]
-TEXT=Leave the hut
-NEXT=room1
-
-<forest_clearing>
-[DESCRIPTION]
-TEXT=
-After defeating the animal, you find a hidden treasure!
-ENDTEXT
-
-[O]
-TEXT=Take the treasure
-ACTIONS=addItem:treasure
+TEXT=Go east
 NEXT=win
+
+[O]
+TEXT=Go west
+NEXT=lose
 
 <win>
 [DESCRIPTION]
-TEXT=
-Congratulations! You have won the game.
-ENDTEXT
+TEXT=You found the exit and escaped! You win!
+
+<lose>
+[DESCRIPTION]
+TEXT=You walked into a trap. Game over.
+
+<timeEnd>
+[DESCRIPTION]
+TEXT=Time has run out. You failed to escape.
+
+[O]
+TEXT=Try again
+NEXT=room1
 ```
 
----
+## Extending the Game
 
-## Creating Your Own Adventure
-
-1. **Create a New Script File**
-
-   Write your game script in a text file (e.g., `script.txt`) following the scripting language guidelines.
-
-2. **Define Global Settings**
-
-   Set the `TIMER` and `START` room.
-
-3. **Design Your Rooms**
-
-   - Define unique room IDs.
-   - Write descriptions using `[DESCRIPTION]` blocks.
-   - Use conditions to display descriptions based on player state.
-
-4. **Add Options**
-
-   - Provide meaningful choices for the player.
-   - Use conditions to control option availability.
-   - Specify actions and next rooms.
-
-5. **Implement Game Logic**
-
-   - Use items and conditions to create puzzles and branching paths.
-   - Manage the in-game timer with `TIMECOST`.
-
-6. **Test Your Game**
-
-   - Run the game and play through different paths.
-   - Debug any issues with conditions or actions.
-
----
+- **Add New Rooms**: Define new rooms using the `<room_id>` syntax.
+- **Create Complex Conditions**: Use multiple conditions to create intricate game logic.
+- **Define New Actions**: Implement additional actions in the `processAction` method in `Game.java` if needed.
+- **Adjust Time Mechanics**: Modify `TIMECOST` values and the starting `TIMER` to balance game difficulty.
+- **Implement Save/Load**: Extend the Java code to support saving and loading game states.
 
 ## Disclosure
-
-I'm bad at writing README's so this was written by ChatGPT
+I'm bad at writing README's so this was written my ChatGPT.

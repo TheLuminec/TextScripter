@@ -6,7 +6,7 @@ public class Main {
             game.play();
         } 
         catch (Exception e) {
-            e.printStackTrace();
+            System.out.println(e);
         }
     }
 }
